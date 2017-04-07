@@ -2,8 +2,9 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
-mongoose.connect('localhost:27017/url');
+mongoose.connect(process.env.MONGODB_URI);
 var Schema = mongoose.Schema;
+
 
 var urlSchema = new Schema({
   url: String,
@@ -23,7 +24,7 @@ router.get('/', function(req, res, next) {
 router.get('/new/:url(*)', function(req, res) {
   // create Url document and return json object
   function render() {
-    shortUrl = `http://localhost:3000/${initial}`;
+    shortUrl = `https://chaddurlshortener.herokuapp.com/${initial}`;
     var item = {
       url: param,
       shortUrl: shortUrl,
@@ -58,7 +59,7 @@ router.get('/new/:url(*)', function(req, res) {
         res.json({url: foundUrl[0].url, shortUrl: foundUrl[0].shortUrl})
       } else{
 
-        // check if anything in the database 
+        // check if anything in the database
         Url.find({}, function(err, objUrl) {
           if (err) throw err;
           else if (objUrl.length === 0) {
@@ -80,7 +81,7 @@ router.get('/new/:url(*)', function(req, res) {
 
 router.get('/:shorturl', function(req, res, next) {
   param = req.params.shorturl;
-  Url.find({ shortUrl: `http://localhost:3000/${param}` }, function(err, sUrl) {
+  Url.find({ shortUrl: `https://chaddurlshortener.herokuapp.com/${param}` }, function(err, sUrl) {
     if(err) throw err;
     else if(sUrl.length !== 0) {
       var fullUrl = sUrl[0].url;
