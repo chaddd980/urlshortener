@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
+// mongoose.connect("mongodb://chadd980:Bakura15@ds155130.mlab.com:55130/urlshortener");
 mongoose.connect(process.env.MONGODB_URI);
 var Schema = mongoose.Schema;
 
@@ -22,33 +23,13 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/new/:url(*)', function(req, res) {
-  // create Url document and return json object
-  function render() {
-    shortUrl = `https://chaddurlshortener.herokuapp.com/${initial}`;
-    var item = {
-      url: param,
-      shortUrl: shortUrl,
-      number: initial
-    }
-    var data = new Url(item).save(function(err, doc) {
-      if(err){res.json(err)}
-      else {
-        console.log('success')
-        mongoose.model('Url').find(function(err, urls) {
-          if(err){res.json(err)}
-          res.json(item);
-        })
-      }
-    });
-  }
-
   // check if url is valid
   param = req.params.url;
   reg = /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/;
   if (reg.exec(param) === null) {
     res.render("error");
   } else {
-    param = reg.exec(param)[0];
+    // newParam = reg.exec(param)[0];
     var foundUrl
 
     // check if url is already in database
@@ -76,6 +57,26 @@ router.get('/new/:url(*)', function(req, res) {
         })
       }
     })
+  }
+  // create Url document and return json object
+  function render() {
+    // shortUrl = `https://chaddurlshortener.herokuapp.com/${initial}`;
+    shortUrl = `https://localhost:3000/${initial}`;
+    var item = {
+      url: param,
+      shortUrl: shortUrl,
+      number: initial
+    }
+    var data = new Url(item).save(function(err, doc) {
+      if(err){res.json(err)}
+      else {
+        console.log('success')
+        mongoose.model('Url').find(function(err, urls) {
+          if(err){res.json(err)}
+          res.json(item);
+        })
+      }
+    });
   }
 });
 
